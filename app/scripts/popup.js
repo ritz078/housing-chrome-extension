@@ -9,22 +9,56 @@ chrome.tabs.query({
 
   var url = tabs[0].url;
 
+  var queryString = {};
+  var searchString;
+  var domain;
+
+  function openTab() {
+    console.log(queryString);
+    $bot.checked ? queryString.bot = true : delete queryString.bot;
+    $desktop.checked ? delete queryString.desktop : queryString.desktop = false;
+    var newUrl = '';
+    console.log(queryString);
+    var keys = Object.keys(queryString);
+
+    console.log(keys.length, keys);
+    if (keys.length) {
+      newUrl = '?';
+      for (var i = 0; i < keys.length; i++) {
+        newUrl += keys[i] + '=' + queryString[keys[i]] + ((i === keys.length - 1) ? '' : '&');
+      }
+    }
+
+    console.log(newUrl);
+
+    chrome.tabs.create({
+      'url': domain + newUrl
+    });
+  }
+
   if (url.match(housingRegex)) {
 
-    var domain = url.split('?')[0];
-    var searchString = url.split('?')[1];
+    domain = url.split('?')[0];
 
-    var queryString = {};
-    var getParams = searchString.split('&');
+    var getParams;
 
-    for (var i = 0; i < getParams.length; i++) {
-      console.log(getParams[i]);
-
-      var y = getParams[i].split('=');
-      var key = y[0];
-      var value = y[1];
-      queryString[key] = value;
+    if (url.split('?')[1]) {
+      searchString = url.split('?')[1];
+      getParams = searchString.split('&');
     }
+
+
+    console.log(getParams);
+
+    if (getParams) {
+      for (var i = 0; i < getParams.length; i++) {
+        var y = getParams[i].split('=');
+        var key = y[0];
+        var value = y[1];
+        queryString[key] = value;
+      }
+    }
+
 
     var $bot = document.getElementById('bot');
     var $desktop = document.getElementById('desktop');
@@ -41,23 +75,13 @@ chrome.tabs.query({
       $desktop.checked = false;
     }
 
-    function openTab() {
-      $bot.checked ? queryString.bot = true : delete queryString.bot;
-      $desktop.checked ? delete queryString.desktop : queryString.desktop = false;
-      var newUrl = '';
-      var keys = Object.keys(queryString);
-      for (var i = 0; i < keys.length; i++) {
-        newUrl += keys[i] + '=' + queryString[keys[i]] + ((i === keys.length - 1) ? '' : '&');
-      }
-      chrome.tabs.create({
-        'url': domain + '?' + newUrl
-      });
-    }
 
 
     var $open = document.getElementById('openPage');
 
     $open.onclick = openTab;
   }
+
+
 
 });
