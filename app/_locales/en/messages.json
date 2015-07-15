@@ -1,10 +1,10 @@
 {
-  "appName": {
-    "message": "housing tester",
-    "description": "The name of the application"
-  },
-  "appDescription": {
-    "message": "Housing project",
-    "description": "The description of the application"
-  }
+	"appName": {
+		"message": "Housing Debug",
+		"description": "The name of the application"
+	},
+	"appDescription": {
+		"message": "An extension to simplify the process of debugging.",
+		"description": "The description of the application"
+	}
 }

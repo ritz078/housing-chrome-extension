@@ -1,7 +1,11 @@
+*{
+    box-sizing:border-box;
+}
+
 body {
     padding: 5px;
     width: 200px;
-    font-family: 'Lato';
+    font-family: 'Arial', sans-serif;
 }
 
 button {
@@ -31,6 +35,10 @@ button {
     margin-bottom: 10px;
 }
 
+button:first-of-type{
+    float:left;
+}
+
 .btn.secondary {
     border: 1px solid #1fc055;
     background: #1fc055;
@@ -52,6 +60,16 @@ div {
 div input {
     float: right;
     outline:none;
+}
+
+input[type="text"]{
+      width: 100%;
+  padding: 6px;
+  border-radius: 2px;
+  border: 1px solid #E2E2E2;
+  margin: 10px 0;
+  outline: none;
+  font-family:inherit;
 }
 
 label {

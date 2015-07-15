@@ -7,33 +7,45 @@ chrome.tabs.query({
   active: true
 }, function(tabs) {
 
+  var data = {};
+  console.log(tabs);
+
   var url = tabs[0].url;
 
   var queryString = {};
   var searchString;
   var domain;
 
-  function openTab() {
-    console.log(queryString);
+  function openVM(){
+    var path = domain.split('//')[1].split('.com/')[1] || '';
+    domain = 'http://'+data.user+'.housing.com:'+data.port+'/'+path;
+    var newUrl = processTab();
+    chrome.tabs.create({
+      'url': domain + newUrl
+    });
+  }
+
+  function openMain(){
+    var path = domain.split('//')[1].split('.com/')[1] || '';
+    domain = 'https://housing.com/'+path;
+    var newUrl = processTab();
+    chrome.tabs.create({
+      'url': domain + newUrl
+    });
+  }
+
+  function processTab() {
     $bot.checked ? queryString.bot = true : delete queryString.bot;
     $desktop.checked ? delete queryString.desktop : queryString.desktop = false;
     var newUrl = '';
-    console.log(queryString);
     var keys = Object.keys(queryString);
-
-    console.log(keys.length, keys);
     if (keys.length) {
       newUrl = '?';
       for (var i = 0; i < keys.length; i++) {
         newUrl += keys[i] + '=' + queryString[keys[i]] + ((i === keys.length - 1) ? '' : '&');
       }
     }
-
-    console.log(newUrl);
-
-    chrome.tabs.create({
-      'url': domain + newUrl
-    });
+    return newUrl;
   }
 
   if (url.match(housingRegex)) {
@@ -77,11 +89,39 @@ chrome.tabs.query({
 
 
 
-    var $open = document.getElementById('openPage');
+    var $openvm = document.getElementById('openVm');
+    var $openmain = document.getElementById('openMain');
 
-    $open.onclick = openTab;
+    $openvm.onclick = openVM;
+    $openmain.onclick = openMain;
+
   }
 
+  var $user = document.getElementById('user');
+  var $port = document.getElementById('port');
 
+  chrome.storage.sync.get('user', function(r) {
+    data.user = r.user || '';
+    $user.value = data.user;
+  });
 
+  chrome.storage.sync.get('port', function(r) {
+    data.port = r.port || '';
+    $port.value = data.port;
+  });
+
+  $user.onkeyup = function() {
+    console.log('a');
+    data.user = $user.value;
+    chrome.storage.sync.set(data, function() {
+      console.log('saved');
+    });
+  };
+
+  $port.onkeyup = function() {
+    data.port = $port.value;
+    chrome.storage.sync.set(data, function() {
+      console.log('port saved');
+    });
+  };
 });
